@@ -42,7 +42,7 @@ export const submitApplication = createServerFn({ method: "POST" })
     const cv = data.get("cv");
     const file = cv instanceof File ? cv : null;
     const cvErr = validateCvMeta(file);
-    if (cvErr) fieldErrors.cv = cvErr;
+    if (cvErr) fieldErrors["cv"] = cvErr;
     if (Object.keys(fieldErrors).length) return { ok: false, error: "Please fix the highlighted fields.", fieldErrors };
 
     const ext = cvExtension(file!.name)!;
