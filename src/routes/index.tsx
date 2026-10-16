@@ -1,5 +1,5 @@
 import { createFileRoute } from "@tanstack/react-router";
-import { MapPin, Briefcase, Instagram } from "lucide-react";
+import { MapPin, Briefcase } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { ApplicationForm } from "@/components/ApplicationForm";
 import office from "@/assets/office.png.asset.json";
@@ -55,14 +55,6 @@ function Index() {
               <Button variant="cta" size="lg" className="h-12 px-8" asChild>
                 <a href="#apply">Apply Now</a>
               </Button>
-              <a
-                href="https://www.instagram.com/artistvipinbala/"
-                target="_blank"
-                rel="noopener noreferrer"
-                className="inline-flex items-center gap-1.5 text-sm font-medium text-walnut underline-offset-4 hover:underline"
-              >
-                <Instagram className="h-4 w-4" /> Visit Instagram
-              </a>
             </div>
           </div>
         </div>
