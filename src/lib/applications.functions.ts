@@ -14,7 +14,7 @@ import {
 type SubmitResult = { ok: true } | { ok: false; error: string; fieldErrors?: Record<string, string> };
 
 export const submitApplication = createServerFn({ method: "POST" })
-  .inputValidator((data: unknown) => {
+  .validator((data: unknown) => {
     if (!(data instanceof FormData)) throw new Error("Invalid submission");
     return data;
   })
@@ -114,7 +114,7 @@ export const checkAdmin = createServerFn({ method: "GET" })
 
 export const listApplications = createServerFn({ method: "GET" })
   .middleware([requireSupabaseAuth])
-  .inputValidator((d: { search?: string | undefined; status?: string | undefined }) => ({
+  .validator((d: { search?: string | undefined; status?: string | undefined }) => ({
     search: (d.search ?? "").trim().slice(0, 100),
     status: (APPLICATION_STATUSES as readonly string[]).includes(d.status ?? "") ? (d.status as ApplicationStatus) : null,
   }))
@@ -137,7 +137,7 @@ export const listApplications = createServerFn({ method: "GET" })
 
 export const getApplication = createServerFn({ method: "GET" })
   .middleware([requireSupabaseAuth])
-  .inputValidator((d: { id: string }) => ({ id: String(d.id) }))
+  .validator((d: { id: string }) => ({ id: String(d.id) }))
   .handler(async ({ data, context }) => {
     await assertAdmin(context.supabase, context.userId);
     const { data: row, error } = await context.supabase
@@ -153,7 +153,7 @@ export const getApplication = createServerFn({ method: "GET" })
 
 export const updateApplicationStatus = createServerFn({ method: "POST" })
   .middleware([requireSupabaseAuth])
-  .inputValidator((d: { id: string; status: string }) => {
+  .validator((d: { id: string; status: string }) => {
     if (!(APPLICATION_STATUSES as readonly string[]).includes(d.status)) throw new Error("Invalid status");
     return { id: String(d.id), status: d.status as ApplicationStatus };
   })
