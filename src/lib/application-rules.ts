@@ -78,7 +78,7 @@ export type ApplicationFields = {
   consent: boolean;
 };
 
-export type FieldErrors = Partial<Record<keyof ApplicationFields | "cv", string>>;
+export type FieldErrors = { [K in keyof ApplicationFields | "cv"]?: string | undefined };
 
 export function validateFields(f: ApplicationFields): FieldErrors {
   const e: FieldErrors = {};

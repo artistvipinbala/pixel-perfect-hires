@@ -114,7 +114,7 @@ export const checkAdmin = createServerFn({ method: "GET" })
 
 export const listApplications = createServerFn({ method: "GET" })
   .middleware([requireSupabaseAuth])
-  .inputValidator((d: { search?: string; status?: string }) => ({
+  .inputValidator((d: { search?: string | undefined; status?: string | undefined }) => ({
     search: (d.search ?? "").trim().slice(0, 100),
     status: (APPLICATION_STATUSES as readonly string[]).includes(d.status ?? "") ? (d.status as ApplicationStatus) : null,
   }))
