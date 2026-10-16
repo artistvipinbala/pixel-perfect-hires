@@ -193,7 +193,7 @@ export function ApplicationForm() {
               >
                 <Upload className="h-6 w-6 text-primary" />
                 <span className="text-sm font-semibold">Choose file</span>
-                <span className="text-xs text-muted-foreground">PDF, DOC or DOCX · max 5 MB</span>
+                <span className="text-xs text-muted-foreground">PDF, DOC, DOCX, JPG or PNG · max 5 MB</span>
               </button>
             )}
             {err("cv")}

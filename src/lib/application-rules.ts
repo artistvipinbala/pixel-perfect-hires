@@ -12,9 +12,11 @@ export const CV_TYPES: Record<string, string[]> = {
   pdf: ["application/pdf"],
   doc: ["application/msword"],
   docx: ["application/vnd.openxmlformats-officedocument.wordprocessingml.document"],
+  jpg: ["image/jpeg"],
+  png: ["image/png"],
 };
 
-export const CV_ACCEPT = ".pdf,.doc,.docx,application/pdf,application/msword,application/vnd.openxmlformats-officedocument.wordprocessingml.document";
+export const CV_ACCEPT = ".pdf,.doc,.docx,.jpg,.jpeg,.png,application/pdf,application/msword,application/vnd.openxmlformats-officedocument.wordprocessingml.document,image/jpeg,image/png";
 
 /** Normalizes a phone number to E.164. Bare numbers default to +91. Returns null if invalid. */
 export function normalizePhone(raw: string): string | null {
@@ -43,7 +45,8 @@ export function isValidEmail(raw: string): boolean {
 
 export function cvExtension(name: string): string | null {
   const m = /\.([A-Za-z0-9]+)$/.exec(name);
-  const ext = m?.[1]?.toLowerCase();
+  let ext = m?.[1]?.toLowerCase();
+  if (ext === "jpeg") ext = "jpg";
   return ext && ext in CV_TYPES ? ext : null;
 }
 
@@ -65,6 +68,8 @@ export function cvMagicMatches(ext: string, bytes: Uint8Array): boolean {
   if (ext === "pdf") return starts([0x25, 0x50, 0x44, 0x46]);
   if (ext === "docx") return starts([0x50, 0x4b, 0x03, 0x04]);
   if (ext === "doc") return starts([0xd0, 0xcf, 0x11, 0xe0, 0xa1, 0xb1, 0x1a, 0xe1]);
+  if (ext === "jpg") return starts([0xff, 0xd8, 0xff]);
+  if (ext === "png") return starts([0x89, 0x50, 0x4e, 0x47]);
   return false;
 }
 

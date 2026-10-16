@@ -48,7 +48,7 @@ export const submitApplication = createServerFn({ method: "POST" })
     const ext = cvExtension(file!.name)!;
     const bytes = new Uint8Array(await file!.arrayBuffer());
     if (!cvMagicMatches(ext, bytes))
-      return { ok: false, error: "Please fix the highlighted fields.", fieldErrors: { cv: "This file doesn't look like a valid PDF, DOC or DOCX." } };
+      return { ok: false, error: "Please fix the highlighted fields.", fieldErrors: { cv: "This file doesn't look like a valid PDF, DOC, DOCX, JPG or PNG." } };
 
     const { getRequestHeader } = await import("@tanstack/react-start/server");
     const ip = getRequestHeader("cf-connecting-ip") || getRequestHeader("x-forwarded-for")?.split(",")[0]?.trim() || "unknown";

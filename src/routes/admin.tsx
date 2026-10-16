@@ -236,6 +236,9 @@ function Detail({ id }: { id: string }) {
       {a.cv_mime === "application/pdf" && a.previewUrl && (
         <iframe title="CV preview" src={a.previewUrl} className="mt-6 h-[70vh] w-full rounded-2xl border border-border bg-muted" />
       )}
+      {a.cv_mime?.startsWith("image/") && a.previewUrl && (
+        <img src={a.previewUrl} alt={`CV of ${a.full_name}`} className="mt-6 w-full rounded-2xl border border-border bg-muted" />
+      )}
       <p className="mt-3 text-xs text-muted-foreground">CV links expire after 5 minutes. Use “Refresh links” if one stops working.</p>
     </div>
   );
