@@ -12,7 +12,13 @@ describe("application rules", () => {
   it("requires consent", () => expect(validateFields({ ...base, consent: false }).consent).toBeTruthy());
   it("requires CV", () => expect(validateCvMeta(null)).toBeTruthy());
   it("rejects CV over 5 MB", () => expect(validateCvMeta({ name: "cv.pdf", size: 5 * 1024 * 1024 + 1, type: "application/pdf" })).toBeTruthy());
-  it("rejects unsupported CV type", () => expect(validateCvMeta({ name: "cv.png", size: 100, type: "image/png" })).toBeTruthy());
+  it("rejects unsupported CV type", () => expect(validateCvMeta({ name: "cv.gif", size: 100, type: "image/gif" })).toBeTruthy());
   it("accepts docx", () => expect(validateCvMeta({ name: "cv.docx", size: 100, type: "" })).toBeNull());
+  it("accepts jpg photo", () => expect(validateCvMeta({ name: "cv.jpg", size: 100, type: "image/jpeg" })).toBeNull());
+  it("accepts jpeg extension as jpg", () => expect(validateCvMeta({ name: "cv.jpeg", size: 100, type: "" })).toBeNull());
+  it("accepts png photo", () => expect(validateCvMeta({ name: "cv.png", size: 100, type: "image/png" })).toBeNull());
   it("checks pdf signature", () => expect(cvMagicMatches("pdf", new Uint8Array([0x25, 0x50, 0x44, 0x46]))).toBe(true));
+  it("checks jpg signature", () => expect(cvMagicMatches("jpg", new Uint8Array([0xff, 0xd8, 0xff]))).toBe(true));
+  it("checks png signature", () => expect(cvMagicMatches("png", new Uint8Array([0x89, 0x50, 0x4e, 0x47]))).toBe(true));
+  it("rejects jpg with wrong signature", () => expect(cvMagicMatches("jpg", new Uint8Array([0x89, 0x50, 0x4e, 0x47]))).toBe(false));
 });
