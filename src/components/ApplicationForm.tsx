@@ -126,7 +126,7 @@ export function ApplicationForm() {
           </div>
 
           <div>
-            <Label htmlFor="phone">Phone Number<Req /></Label>
+            <Label htmlFor="phone">Whatsapp Number<Req /></Label>
             <div className="mt-1.5 flex">
               <span className="inline-flex items-center rounded-l-md border border-r-0 border-input bg-muted px-3 text-sm text-muted-foreground">+91</span>
               <Input id="phone" type="tel" inputMode="tel" autoComplete="tel-national" placeholder="98765 43210" className="h-11 rounded-l-none" required value={values.phone} onChange={(e) => set("phone", e.target.value)} {...aria("phone")} />
