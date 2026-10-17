@@ -8,6 +8,13 @@
       "when": 1792170361367,
       "tag": "0000_recruitment",
       "breakpoints": true
+    },
+    {
+      "idx": 1,
+      "version": "7",
+      "when": 1792217700651,
+      "tag": "0001_admin_application_deletion",
+      "breakpoints": true
     }
   ]
 }
