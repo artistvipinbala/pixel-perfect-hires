@@ -14,3 +14,4 @@
 - Admin access is checked via `public.has_role` (user_roles table) in every admin server function and in RLS/storage policies; public signup is disabled — never derive admin from login alone.
 - Validation rules live in `src/lib/application-rules.ts`, shared by browser and server, with tests next to it.
 - Application deletion uses an authenticated server function and user-scoped RLS, checking admin access before removing the private CV and then its application; failures remain retryable.
+- Applicant WhatsApp drafts use a browser-safe link helper shared by list and detail views; click-to-chat requires no messaging credentials and never sends automatically.

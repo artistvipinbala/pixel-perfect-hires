@@ -3,7 +3,7 @@ import { useEffect, useState } from "react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { useServerFn } from "@tanstack/react-start";
 import type { Session } from "@supabase/supabase-js";
-import { Loader2, LogOut, Search, Download, ExternalLink, Trash2 } from "lucide-react";
+import { Loader2, LogOut, Search, Download, ExternalLink, Trash2, MessageCircle } from "lucide-react";
 import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
@@ -14,6 +14,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetDescription } from "@/components/ui/sheet";
 import { AlertDialog, AlertDialogContent, AlertDialogHeader, AlertDialogTitle, AlertDialogDescription, AlertDialogFooter } from "@/components/ui/alert-dialog";
 import { APPLICATION_STATUSES } from "@/lib/application-rules";
+import { applicationWhatsAppUrl } from "@/lib/application-whatsapp";
 import { checkAdmin, deleteApplication, getApplication, listApplications, updateApplicationStatus } from "@/lib/applications.functions";
 
 export const Route = createFileRoute("/admin")({
@@ -101,6 +102,16 @@ function statusVariant(s: string) {
   return s === "Shortlisted" ? "default" : s === "Rejected" ? "destructive" : s === "New" ? "secondary" : "outline";
 }
 
+function WhatsAppButton({ fullName, phone }: { fullName: string; phone: string }) {
+  const href = applicationWhatsAppUrl(fullName, phone);
+  if (!href) return null;
+  return <Button variant="outline" size="sm" asChild>
+    <a href={href} target="_blank" rel="noopener noreferrer" aria-label={`WhatsApp message to ${fullName}`}>
+      <MessageCircle /> WhatsApp message
+    </a>
+  </Button>;
+}
+
 function Dashboard({ email }: { email: string }) {
   const list = useServerFn(listApplications);
   const [search, setSearch] = useState("");
@@ -159,19 +170,23 @@ function Dashboard({ email }: { email: string }) {
           ) : (
             <ul className="grid gap-3">
               {q.data.map((a) => (
-                <li key={a.id}>
-                  <button onClick={() => setOpenId(a.id)} className="w-full rounded-2xl border border-border bg-card p-4 text-left shadow-card transition-colors hover:border-primary">
+                <li key={a.id} className="overflow-hidden rounded-2xl border border-border bg-card shadow-card">
+                  <Button variant="ghost" onClick={() => setOpenId(a.id)} className="block h-auto w-full whitespace-normal rounded-none p-4 text-left">
                     <div className="flex flex-wrap items-start justify-between gap-2">
                       <div className="min-w-0">
                         <p className="font-semibold">{a.full_name}</p>
-                        <p className="truncate text-sm text-muted-foreground">{a.phone} · {a.email}</p>
+                        <p className="break-all text-sm text-muted-foreground">{a.email}</p>
                       </div>
                       <Badge variant={statusVariant(a.status)}>{a.status}</Badge>
                     </div>
                     <p className="mt-2 text-sm text-muted-foreground">
                       {a.place} · {a.education === "Other" ? a.education_other : a.education} · {fmt(a.created_at)}
                     </p>
-                  </button>
+                  </Button>
+                  <div className="flex flex-wrap items-center gap-3 px-4 pb-4">
+                    <span className="text-sm text-muted-foreground">{a.phone}</span>
+                    <WhatsAppButton fullName={a.full_name} phone={a.phone} />
+                  </div>
                 </li>
               ))}
             </ul>
@@ -237,7 +252,10 @@ function Detail({ id, onDeleted }: { id: string; onDeleted: () => void }) {
         {rows.map(([k, v]) => (
           <div key={k} className="grid grid-cols-3 gap-2 px-4 py-3 text-sm">
             <dt className="text-muted-foreground">{k}</dt>
-            <dd className="col-span-2 break-words font-medium">{v}</dd>
+            <dd className="col-span-2 break-words font-medium">
+              {v}
+              {k === "Phone" && <div className="mt-2"><WhatsAppButton fullName={a.full_name} phone={a.phone} /></div>}
+            </dd>
           </div>
         ))}
       </dl>
