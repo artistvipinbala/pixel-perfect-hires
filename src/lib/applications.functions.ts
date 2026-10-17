@@ -163,3 +163,14 @@ export const updateApplicationStatus = createServerFn({ method: "POST" })
     if (error) throw new Error(error.message);
     return { ok: true };
   });
+
+export const deleteApplication = createServerFn({ method: "POST" })
+  .middleware([requireSupabaseAuth])
+  .inputValidator((data: { id: string }) => {
+    if (!/^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(data.id)) throw new Error("Invalid application");
+    return { id: data.id };
+  })
+  .handler(async ({ data, context }) => {
+    const { deleteApplicationRecord } = await import("./application-deletion.server");
+    return deleteApplicationRecord(context.supabase, context.userId, data.id);
+  });

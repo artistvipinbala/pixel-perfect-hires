@@ -3,7 +3,7 @@ import { useEffect, useState } from "react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { useServerFn } from "@tanstack/react-start";
 import type { Session } from "@supabase/supabase-js";
-import { Loader2, LogOut, Search, Download, ExternalLink } from "lucide-react";
+import { Loader2, LogOut, Search, Download, ExternalLink, Trash2 } from "lucide-react";
 import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
@@ -12,8 +12,9 @@ import { Label } from "@/components/ui/label";
 import { Badge } from "@/components/ui/badge";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetDescription } from "@/components/ui/sheet";
+import { AlertDialog, AlertDialogContent, AlertDialogHeader, AlertDialogTitle, AlertDialogDescription, AlertDialogFooter } from "@/components/ui/alert-dialog";
 import { APPLICATION_STATUSES } from "@/lib/application-rules";
-import { checkAdmin, getApplication, listApplications, updateApplicationStatus } from "@/lib/applications.functions";
+import { checkAdmin, deleteApplication, getApplication, listApplications, updateApplicationStatus } from "@/lib/applications.functions";
 
 export const Route = createFileRoute("/admin")({
   head: () => ({
@@ -180,17 +181,29 @@ function Dashboard({ email }: { email: string }) {
 
       <Sheet open={!!openId} onOpenChange={(o) => !o && setOpenId(null)}>
         <SheetContent className="w-full overflow-y-auto sm:max-w-xl">
-          {openId && <Detail id={openId} />}
+          {openId && <Detail key={openId} id={openId} onDeleted={() => setOpenId(null)} />}
         </SheetContent>
       </Sheet>
     </main>
   );
 }
 
-function Detail({ id }: { id: string }) {
+function Detail({ id, onDeleted }: { id: string; onDeleted: () => void }) {
   const get = useServerFn(getApplication);
   const update = useServerFn(updateApplicationStatus);
+  const remove = useServerFn(deleteApplication);
+  const [confirmDelete, setConfirmDelete] = useState(false);
   const qc = useQueryClient();
+  const deletion = useMutation({
+    mutationFn: () => remove({ data: { id } }),
+    onSuccess: () => {
+      toast.success("Application deleted");
+      setConfirmDelete(false);
+      onDeleted();
+      qc.removeQueries({ queryKey: ["application", id] });
+      qc.invalidateQueries({ queryKey: ["applications"] });
+    },
+  });
   const q = useQuery({ queryKey: ["application", id], queryFn: () => get({ data: { id } }), staleTime: 0 });
   const m = useMutation({
     mutationFn: (status: string) => update({ data: { id, status } }),
@@ -215,7 +228,7 @@ function Detail({ id }: { id: string }) {
       </SheetHeader>
       <div className="mt-4">
         <Label>Status</Label>
-        <Select value={a.status} onValueChange={(v) => m.mutate(v)} disabled={m.isPending}>
+        <Select value={a.status} onValueChange={(v) => m.mutate(v)} disabled={m.isPending || deletion.isPending}>
           <SelectTrigger className="mt-1.5 h-11"><SelectValue /></SelectTrigger>
           <SelectContent>{APPLICATION_STATUSES.map((s) => <SelectItem key={s} value={s}>{s}</SelectItem>)}</SelectContent>
         </Select>
@@ -240,6 +253,27 @@ function Detail({ id }: { id: string }) {
         <img src={a.previewUrl} alt={`CV of ${a.full_name}`} className="mt-6 w-full rounded-2xl border border-border bg-muted" />
       )}
       <p className="mt-3 text-xs text-muted-foreground">CV links expire after 5 minutes. Use “Refresh links” if one stops working.</p>
+      <div className="mt-8 border-t border-border pt-5">
+        <Button variant="destructive" disabled={m.isPending || deletion.isPending} onClick={() => { deletion.reset(); setConfirmDelete(true); }}>
+          <Trash2 /> Delete application
+        </Button>
+      </div>
+      <AlertDialog open={confirmDelete} onOpenChange={(open) => { if (!deletion.isPending) setConfirmDelete(open); }}>
+        <AlertDialogContent className="max-w-[calc(100%-2rem)] sm:max-w-lg">
+          <AlertDialogHeader>
+            <AlertDialogTitle>Delete application?</AlertDialogTitle>
+            <AlertDialogDescription>Delete {a.full_name}’s application and uploaded CV permanently? This cannot be undone.</AlertDialogDescription>
+          </AlertDialogHeader>
+          {deletion.isError && <p role="alert" className="text-sm text-destructive">{deletion.error instanceof Error ? deletion.error.message : "Couldn’t delete this application. Please try again."}</p>}
+          <AlertDialogFooter className="gap-2">
+            <Button variant="outline" disabled={deletion.isPending} onClick={() => setConfirmDelete(false)}>Cancel</Button>
+            <Button variant="destructive" disabled={deletion.isPending} onClick={() => deletion.mutate()}>
+              {deletion.isPending ? <Loader2 className="animate-spin" /> : <Trash2 />}
+              {deletion.isPending ? "Deleting…" : "Delete permanently"}
+            </Button>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
     </div>
   );
 }
