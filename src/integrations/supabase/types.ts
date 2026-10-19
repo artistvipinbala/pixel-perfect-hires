@@ -28,8 +28,10 @@ export type Database = {
           full_name: string
           id: string
           idempotency_key: string
+          other_skills: string | null
           phone: string
           place: string
+          skills: string[]
           status: Database["public"]["Enums"]["application_status"]
           submitter_ip: string | null
         }
@@ -46,8 +48,10 @@ export type Database = {
           full_name: string
           id?: string
           idempotency_key: string
+          other_skills?: string | null
           phone: string
           place: string
+          skills?: string[]
           status?: Database["public"]["Enums"]["application_status"]
           submitter_ip?: string | null
         }
@@ -64,8 +68,10 @@ export type Database = {
           full_name?: string
           id?: string
           idempotency_key?: string
+          other_skills?: string | null
           phone?: string
           place?: string
+          skills?: string[]
           status?: Database["public"]["Enums"]["application_status"]
           submitter_ip?: string | null
         }

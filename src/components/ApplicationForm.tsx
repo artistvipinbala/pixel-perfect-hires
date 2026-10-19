@@ -9,8 +9,9 @@ import { Progress } from "@/components/ui/progress";
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { submitApplication } from "@/lib/applications.functions";
-import { CV_ACCEPT, EDUCATION_OPTIONS, validateCvMeta, validateFields, type FieldErrors } from "@/lib/application-rules";
+import { CV_ACCEPT, EDUCATION_OPTIONS, SKILL_OPTIONS, validateCvMeta, validateFields, type FieldErrors } from "@/lib/application-rules";
 
+const emptySkills = { skills: [] as string[], otherSkills: "" };
 const empty = { fullName: "", phone: "", email: "", place: "", education: "", educationOther: "", consent: false };
 
 function formatSize(n: number) {
@@ -20,6 +21,7 @@ function formatSize(n: number) {
 export function ApplicationForm() {
   const submit = useServerFn(submitApplication);
   const [values, setValues] = useState(empty);
+  const [skillVals, setSkillVals] = useState(emptySkills);
   const [file, setFile] = useState<File | null>(null);
   const [errors, setErrors] = useState<FieldErrors>({});
   const [formError, setFormError] = useState<string | null>(null);
@@ -58,6 +60,8 @@ export function ApplicationForm() {
 
     const fd = new FormData();
     Object.entries(values).forEach(([k, v]) => fd.append(k, String(v)));
+    skillVals.skills.forEach((s) => fd.append("skills", s));
+    fd.append("otherSkills", skillVals.otherSkills);
     fd.append("cv", file!);
     fd.append("idempotencyKey", idemKey.current);
     fd.append("website", (formRef.current?.elements.namedItem("website") as HTMLInputElement)?.value ?? "");
@@ -70,6 +74,7 @@ export function ApplicationForm() {
       if (res.ok) {
         setProgress(100);
         setValues(empty);
+        setSkillVals(emptySkills);
         setFile(null);
         if (fileInput.current) fileInput.current.value = "";
         idemKey.current = crypto.randomUUID();
@@ -109,7 +114,7 @@ export function ApplicationForm() {
         className="mx-auto max-w-xl rounded-3xl border border-border bg-card p-6 shadow-card sm:p-10"
       >
         <h2 className="text-3xl font-bold tracking-tight">Apply for Office Staff</h2>
-        <p className="mt-1 text-sm text-muted-foreground">All fields are required.</p>
+        <p className="mt-1 text-sm text-muted-foreground">Fields marked * are required.</p>
 
         {/* Honeypot */}
         <div className="absolute -left-[9999px] h-0 w-0 overflow-hidden" aria-hidden="true">
@@ -169,6 +174,26 @@ export function ApplicationForm() {
               {err("educationOther")}
             </div>
           )}
+
+          <fieldset>
+            <legend className="text-sm font-medium">Basic Skills <span className="font-normal text-muted-foreground">(tick what you know)</span></legend>
+            <div className="mt-2 space-y-2.5">
+              {SKILL_OPTIONS.map((s, i) => (
+                <div key={s} className="flex items-center gap-3">
+                  <Checkbox
+                    id={`skill-${i}`}
+                    checked={skillVals.skills.includes(s)}
+                    onCheckedChange={(c) =>
+                      setSkillVals((v) => ({ ...v, skills: c === true ? [...v.skills, s] : v.skills.filter((x) => x !== s) }))
+                    }
+                  />
+                  <Label htmlFor={`skill-${i}`} className="text-sm font-normal">{s}</Label>
+                </div>
+              ))}
+            </div>
+            <Label htmlFor="otherSkills" className="mt-4 block">Other skills <span className="font-normal text-muted-foreground">(optional)</span></Label>
+            <Input id="otherSkills" maxLength={500} className="mt-1.5 h-11" placeholder="e.g. Canva, CapCut, Photoshop" value={skillVals.otherSkills} onChange={(e) => setSkillVals((v) => ({ ...v, otherSkills: e.target.value }))} />
+          </fieldset>
 
           <div>
             <Label htmlFor="cv">Upload CV / Resume<Req /></Label>

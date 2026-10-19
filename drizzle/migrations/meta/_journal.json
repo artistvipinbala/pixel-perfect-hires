@@ -15,6 +15,13 @@
       "when": 1792217700651,
       "tag": "0001_admin_application_deletion",
       "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "7",
+      "when": 1792400000000,
+      "tag": "0002_applicant_skills",
+      "breakpoints": true
     }
   ]
 }

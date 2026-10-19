@@ -232,6 +232,8 @@ function Detail({ id, onDeleted }: { id: string; onDeleted: () => void }) {
   const rows: [string, string][] = [
     ["Full Name", a.full_name], ["Phone", a.phone], ["Email", a.email], ["Place", a.place],
     ["Education", a.education], ...(a.education === "Other" ? [["Qualification", a.education_other ?? ""] as [string, string]] : []),
+    ["Skills", a.skills?.length ? a.skills.join(", ") : "—"],
+    ...(a.other_skills ? [["Other skills", a.other_skills] as [string, string]] : []),
     ["Submitted", fmt(a.created_at)], ["Consent given", fmt(a.consent_at)],
     ["CV file", `${a.cv_filename} (${Math.round(a.cv_size / 1024)} KB)`],
   ];
