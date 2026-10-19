@@ -19,10 +19,11 @@ describe("applicant WhatsApp draft body", () => {
     expect(draft.startsWith("Hi Asha,")).toBe(true);
   });
 
-  it("asks for a date, a printed CV copy and closes with thanks", () => {
-    expect(draft).toContain("[തീയതി]");
+  it("invites for Tomorrow at 11 AM, asks for a printed CV copy and closes with thanks", () => {
+    expect(draft).toContain("Tomorrow");
+    expect(draft).toContain("11 മണിക്ക്");
     expect(draft).toContain("printed copy");
     expect(draft).toContain("Thank you.");
-    expect(draft).not.toContain("Tomorrow");
+    expect(draft).not.toContain("[തീയതി]");
   });
 });
