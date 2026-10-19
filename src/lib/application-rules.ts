@@ -3,6 +3,18 @@
 export const EDUCATION_OPTIONS = ["Plus Two", "Diploma", "Graduation", "Post Graduation", "Other"] as const;
 export type Education = (typeof EDUCATION_OPTIONS)[number];
 
+export const SKILL_OPTIONS = [
+  "Basic Video Editing",
+  "Creative Skill / Design Sense",
+  "Video editing tools (Phone or Computer)",
+  "Social Media Basics",
+] as const;
+
+/** Keeps only known skills, without duplicates. */
+export function cleanSkills(raw: string[]): string[] {
+  return SKILL_OPTIONS.filter((s) => raw.includes(s));
+}
+
 export const APPLICATION_STATUSES = ["New", "Reviewed", "Shortlisted", "Contacted", "Rejected"] as const;
 export type ApplicationStatus = (typeof APPLICATION_STATUSES)[number];
 

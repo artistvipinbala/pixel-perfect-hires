@@ -22,3 +22,9 @@ describe("application rules", () => {
   it("checks png signature", () => expect(cvMagicMatches("png", new Uint8Array([0x89, 0x50, 0x4e, 0x47]))).toBe(true));
   it("rejects jpg with wrong signature", () => expect(cvMagicMatches("jpg", new Uint8Array([0x89, 0x50, 0x4e, 0x47]))).toBe(false));
 });
+
+import { cleanSkills as _cleanSkills } from "./application-rules";
+import { test as _t, expect as _e } from "vitest";
+_t("cleanSkills keeps only the four listed skills, once each", () => {
+  _e(_cleanSkills(["Social Media Basics", "Hacking", "Basic Video Editing", "Basic Video Editing"])).toEqual(["Basic Video Editing", "Social Media Basics"]);
+});

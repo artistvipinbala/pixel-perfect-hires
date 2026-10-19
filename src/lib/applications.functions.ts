@@ -3,6 +3,7 @@ import { requireSupabaseAuth } from "@/integrations/supabase/auth-middleware";
 import {
   APPLICATION_STATUSES,
   CV_TYPES,
+  cleanSkills,
   cvExtension,
   cvMagicMatches,
   normalizePhone,
@@ -84,6 +85,8 @@ export const submitApplication = createServerFn({ method: "POST" })
       place: fields.place.trim(),
       education: fields.education,
       education_other: fields.education === "Other" ? fields.educationOther.trim() : null,
+      skills: cleanSkills(data.getAll("skills").filter((v): v is string => typeof v === "string")),
+      other_skills: str("otherSkills").trim().slice(0, 500) || null,
       consent_at: new Date().toISOString(),
       cv_path: path,
       cv_filename: file!.name.slice(0, 200),
@@ -142,7 +145,7 @@ export const getApplication = createServerFn({ method: "GET" })
     await assertAdmin(context.supabase, context.userId);
     const { data: row, error } = await context.supabase
       .from("applications")
-      .select("id, full_name, phone, email, place, education, education_other, consent_at, cv_path, cv_filename, cv_mime, cv_size, status, created_at")
+      .select("id, full_name, phone, email, place, education, education_other, skills, other_skills, consent_at, cv_path, cv_filename, cv_mime, cv_size, status, created_at")
       .eq("id", data.id)
       .single();
     if (error) throw new Error(error.message);
