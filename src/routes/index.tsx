@@ -1,5 +1,5 @@
 import { createFileRoute } from "@tanstack/react-router";
-import { MapPin, Briefcase } from "lucide-react";
+import { MapPin, Briefcase, Sparkles, IndianRupee, Check } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { ApplicationForm } from "@/components/ApplicationForm";
 import office from "@/assets/office.png.asset.json";
@@ -41,12 +41,28 @@ function Index() {
             <p className="font-display text-sm font-semibold uppercase tracking-[0.2em] text-walnut">Artist Vipin Bala</p>
             <h1 className="mt-3 text-5xl font-extrabold leading-[1.05] tracking-tight md:text-6xl lg:text-7xl">We’re Hiring</h1>
             <div className="mt-5 flex flex-wrap gap-2">
+              <span className="inline-flex items-center gap-1.5 rounded-full bg-primary px-3 py-1.5 text-sm font-bold text-primary-foreground shadow-card">
+                <Sparkles className="h-4 w-4" /> Freshers Can Apply
+              </span>
+              <span className="inline-flex items-center gap-1.5 rounded-full bg-card px-3 py-1.5 text-sm font-bold shadow-card">
+                <IndianRupee className="h-4 w-4 text-primary" /> ₹8,000 – ₹10,000 / month
+              </span>
               <span className="inline-flex items-center gap-1.5 rounded-full bg-card px-3 py-1.5 text-sm font-semibold shadow-card">
                 <Briefcase className="h-4 w-4 text-primary" /> Office Staff
               </span>
               <span className="inline-flex items-center gap-1.5 rounded-full bg-card px-3 py-1.5 text-sm font-semibold shadow-card">
                 <MapPin className="h-4 w-4 text-primary" /> Valanchery, Kerala
               </span>
+            </div>
+            <div className="mt-5 rounded-xl bg-card/90 p-4 shadow-card">
+              <p className="text-sm font-semibold uppercase tracking-wider text-walnut">Job Roles</p>
+              <ul className="mt-2 space-y-1.5 text-base">
+                {["Office Staff", "Social Media Management", "Basic Video Editing (Mobile or Computer)", "Basic System Work"].map((r) => (
+                  <li key={r} className="flex items-start gap-2">
+                    <Check className="mt-0.5 h-4 w-4 shrink-0 text-primary" /> {r}
+                  </li>
+                ))}
+              </ul>
             </div>
             <p className="mt-5 text-lg leading-relaxed text-muted-foreground">
               Join our creative team. Submit your details and CV to apply.
