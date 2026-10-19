@@ -10,3 +10,19 @@ describe("applicant WhatsApp recipient", () => {
     expect(applicationWhatsAppUrl("Asha Kumar", "123")).toBeNull();
   });
 });
+
+describe("applicant WhatsApp draft body", () => {
+  const body = (link: string | null) => new URL(String(link)).searchParams.get("text") ?? "";
+  const draft = body(applicationWhatsAppUrl("Asha Kumar", "9876543210"));
+
+  it("greets the applicant by first name", () => {
+    expect(draft.startsWith("Hi Asha,")).toBe(true);
+  });
+
+  it("asks for a date, a printed CV copy and closes with thanks", () => {
+    expect(draft).toContain("[തീയതി]");
+    expect(draft).toContain("printed copy");
+    expect(draft).toContain("Thank you.");
+    expect(draft).not.toContain("Tomorrow");
+  });
+});
