@@ -10,7 +10,7 @@
 <!-- LOVABLE:END -->
 
 ## Architecture rules
-- Application submission goes through the `submitApplication` server function (service-role, validated server-side); applicants never get table or storage access — keeps CVs private.
+- Public application form no longer uploads or saves; it validates in the browser and opens a prefilled WhatsApp chat to the office (src/lib/apply-whatsapp.ts) where the applicant attaches the CV — keeps CVs off the server. submitApplication server fn remains but is unused.
 - Admin access is checked via `public.has_role` (user_roles table) in every admin server function and in RLS/storage policies; public signup is disabled — never derive admin from login alone.
 - Validation rules live in `src/lib/application-rules.ts`, shared by browser and server, with tests next to it.
 - Application deletion uses an authenticated server function and user-scoped RLS, checking admin access before removing the private CV and then its application; failures remain retryable.
