@@ -113,7 +113,7 @@ export function ApplicationForm() {
         noValidate
         className="mx-auto max-w-xl rounded-3xl border border-border bg-card p-6 shadow-card sm:p-10"
       >
-        <h2 className="text-3xl font-bold tracking-tight">Apply for Office Staff</h2>
+        <h2 className="text-3xl font-bold tracking-tight">Apply for Job</h2>
         <p className="mt-1 text-sm text-muted-foreground">Fields marked * are required.</p>
 
         {/* Honeypot */}
