@@ -48,7 +48,7 @@ function Index() {
                 <IndianRupee className="h-4 w-4 text-primary" /> ₹8,000 – ₹10,000 / month
               </span>
               <span className="inline-flex items-center gap-1.5 rounded-full bg-card px-3 py-1.5 text-sm font-semibold shadow-card">
-                <Briefcase className="h-4 w-4 text-primary" /> Office Staff
+                <Briefcase className="h-4 w-4 text-primary" /> Social Media Manager
               </span>
               <span className="inline-flex items-center gap-1.5 rounded-full bg-card px-3 py-1.5 text-sm font-semibold shadow-card">
                 <MapPin className="h-4 w-4 text-primary" /> Valanchery, Kerala
